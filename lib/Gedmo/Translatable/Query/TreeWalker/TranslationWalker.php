@@ -309,6 +309,13 @@ class TranslationWalker extends SqlWalker
             $transTable = $quoteStrategy->getTableName($transMeta, $this->platform);
             foreach ($config['fields'] as $field) {
                 $compTblAlias = $this->walkIdentificationVariable($dqlAlias, $field);
+
+                if($joinStrategy == 'INNER') {
+                    if($meta->isNullable($field)) {
+                        $joinStrategy = 'LEFT';
+                    }
+                }
+
                 $tblAlias = $this->getSQLTableAlias('trans'.$compTblAlias.$field);
                 $sql = " {$joinStrategy} JOIN ".$transTable.' '.$tblAlias;
                 $sql .= ' ON '.$tblAlias.'.'.$quoteStrategy->getColumnName('locale', $transMeta, $this->platform)
